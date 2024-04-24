@@ -1,5 +1,5 @@
 <div align="center">
- <img src="./assets/angular.png">
+ <img src="./assets/logo-nav@2x.png">
 </div>
 
 <br>
