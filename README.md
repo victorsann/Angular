@@ -233,11 +233,11 @@ Tanto o <b>tsconfig.app.json</b> quanto os arquivos subsequentes são arquivos q
 
 A seguir estão listados os principais temas necessários para desenvolver uma aplicação em Angular:
 
-- [Modules]()
-- [Components]()
-- [Templates]()
-- [Directives]()
-- [Dependency Injection]()
+- [Modules](https://github.com/victorsann/Angular/blob/master/content/modules.md)
+- [Components](https://github.com/victorsann/Angular/blob/master/content/components.md)
+- [Templates](https://github.com/victorsann/Angular/blob/master/content/templates.md)
+- [Directives](https://github.com/victorsann/Angular/blob/master/content/directives.md)
+- [Dependency Injection](https://github.com/victorsann/Angular/blob/master/content/dependency_injection.md)
 - [Routing and Navigation]()
 - [Forms]()
 - [HTTP client]()
