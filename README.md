@@ -275,11 +275,285 @@ Tanto o <b>tsconfig.app.json</b> quanto os arquivos subsequentes são arquivos q
 
 A seguir estão listados os principais temas necessários para desenvolver uma aplicação em Angular:
 
-<h2>Components</h2>
+<h1>Aplicações Angular: O Essencial</h1>
 
-<h2>Templates</h2>
+A seguir iremos entrar em contanto com as estruturas mais básicas da composição de uma aplicação desenvolvida com o Angular. É essencial entender essa estrutura antes de abordarmos aspectos diretamente ligados ao desenvolvimento de projetos.
 
-<h2>Directives</h2>
+<h2>@NgModule</h2>
+
+Por ser um framework modular, o Angular possui uma estrutura completa para criar e manutenir módulos. Um módulo é composto por um <b><i>@NgModule()</i></b> decorator, que define a classe imediatamente abaixo como um Module, e cuja função é conter todos os components, directives, pipes e providers da aplicação. A seguir temos um exemplo de declaração de um módulo raiz:
+
+    import { NgModule } from '@angular/core';
+
+
+    @NgModule({
+
+    declarations:[Component1, Component2],
+
+    imports: [Module1, Module2],
+
+    exports: [MyModule],
+
+    providers: [Service1, Service2],
+
+    bootstrap: [AppComponent]})
+
+    class MyModule { }
+
+No my-app project é possível ter acesso ao módulo raiz, que é criado seguindo o modelo de estrutura do Angular modular. A seguir há uma definição básica para os metadados que compõem o módulo raiz:
+
+- declarations: Lista de todos os components, directives e pipes que serão utilizados no módulo raiz.
+- imports: Lista de outros módulos, os quais serão utilizados em algum component ou no próprio módulo.
+- exports: O conjunto de components, directives e pipes declarados neste NgModule que podem ser usados ​​no módelo de qualquer component que faça parte de um NgModule que importe este NgModule.
+- providers: Lista de serviços disponíveis para todos os components declarados no módulo.
+- bootstrap: Indica o component que será instanciado quando a aplicação iniciar o run.
+
+<h2>@Component</h2>
+
+Components são os blocos que sustentam uma aplicação. Um component inclui uma TypeScript class com um <b><i>@Component()</i></b> decorator, um template HTML e um style sheet. O decorator <b><i>@Component()</i></b> define as seguintes especificações:
+
+- Um template HTML que instrui o Angular a como rederizar o component
+- Uma classe Typescript que define seu comportamento
+- Um seletor CSS que define como o component será utilizado em um template
+- Um CSS set opcional que define a aparencia que será dada aos elementos do template HTML
+
+A seguir temos um exemplo da estrutura mínima de um Angular component:
+
+    import { Component } from '@angular/core'
+
+    @Component({
+
+     Selector: 'my-component',
+     templateUrl: '<h2>Hello World</h2>',
+
+    })
+
+    export class MyComponent {
+
+      constructor() {}
+
+    }
+
+<h3>Selector</h3>
+
+O selector define a posição de uso de um component dentro da árvore de objetos DOM, o referenciando através de uma tag HTML que leva sua marcação, tornando este <i>Child</i> daquele que contenha esta tag. Essa componentização permite criar a árvore de componentes que define a view da aplicação. A imagem a seguir ilustra como essa estrutura funciona:
+
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/61476935/131503957-228fad00-e5ea-45ea-a73c-e620f977cdcf.png">
+</div>
+
+Para incluir o exemplo anterior dentro da árvore de objetos DOM, usariamos seu selector da seguinte forma:
+
+    <my-component></my-compinent>
+
+Dentro do template onde fosse declarado, ele seria renderizado da seguinte forma:
+
+    Hello World
+
+<h3>Class</h3>
+
+O Angular possui uma forte presença da Orientação a Objetos em sua estrutura, sendo assim, uma das partes mais importantes de um component é a sua classe, cuja função é definir todo e qualquer comportamento que ele virá a ter. As classes Typescript são nomeadas seguindo a convensão de nomenclatura <i>camelCase</i>, além é claro da palavra-chave <i>class</i> e do modificador <i>export</i>, que possibilita a importação desta em outras partes da aplicação:
+
+    export class MyComponent {
+
+        constructor() {}
+
+    }
+
+Para quem tem certo conhecimento em POO, a definição de um constructor já é bastante familiar. Porém, os cosntructors de uma classe Angular não se restringem a inicialização de classes ou de objetos, elas são de suma importância no processo de dependency injection, sobre o qual falaremos mais a frente.
+
+<h3>Template</h3>
+
+Todo component possui um template HTML que declara como esse component será renderizado. É possível declarar um template em inline ou usando um path de um arquivo separado, que é algo mais comum. Além disso, o Angular adiciona funcionalidades a sintaxe do HTML que permitem a inserção de valores dinâmicos vindos do component. Com isso, o DOM sofre um update cada vez que houver uma atualização no state do component. Para entender melhor o conceito, faça as seguintes modificações no my-app criado anteriormente:
+
+No arquivo <i>app.component.ts</i> faça a seguinte alteração:
+
+    import { Component } from '@angular/core';
+
+    @Component({
+      selector: 'app-root',
+      templateUrl: './app.component.html',
+    })
+    export class AppComponent {
+      message = 'Hello, World!';
+    }
+
+Remova todo o HTML do arquivo <i>app.component.html</i> e inclua a tag a seguir:
+
+    <p>{{ message }}</p>
+
+O uso das chavez duplas {{ }} é chamado de interpolação, que é um recurso utilizado desde o Angular 1, cuja função é definir que o valor atribuído a uma variável será mostrado na tag em que for declarado. Com isso, ao rodar a aplicação temos a mensagem contida no atributo <i>message</i> em tela. Caso essa mensagem seja modificada, a aplicação irá fazer um rerender da tela, atualizando a mensagem.
+
+...
+
+<h2>@Directives</h2>
+
+Directives, ou diretivas, são classes que atribuem comportamento extra a elementos do template de um component, com as quais é possível gerenciar formulários, listas, styles, e a interface em si. A capacidade de criação de estruturas lógicas mediante a inclusão de diretivas no template de um component dá ao desenvolvedor uma capacidade imensa de manipulação do Document Object Model, criando assim uma interface muito mais interativa. As diretivas disponibilizadas pelo Angular são:
+
+<h3>*ngFor</h3>
+
+Um for é uma declaração de controle de fluxo que executa uma interação de acordo com os parâmetros definidos na sua estrutura, normalmente associada a quantidade de elementos de uma unidade de armazenamento, como uma variável ou vetor. O \*ngFor possui o mesmo conceito, e para entendê-lo melhor, imagine o seguinte cenário:
+
+    import { Component } from '@angular/core';
+
+
+    @Component({
+      selector: 'app-root',
+      templateUrl: './app.component.html',
+    })
+
+    export class AppComponent {
+
+      movies: string[] = ['Good Fellas', 'The Irishman', 'Taxi Driver'];
+
+      constructor() {}
+
+    }
+
+Temos um component e nele a declaração da propriedade <i>movies</i>. A ela é data a definição de array, e com isso, a ela são atribuídos três índices. Em seguita, na app.component.html, temos:
+
+    <ul>
+      <li *ngFor="let movie of movies">
+        {{ movie }}
+      </li>
+    </ul>
+
+Ao declarar um \*ngFor, basicamente está sendo dito que o Angular deve interar o atributo movies, e a cada interação, o valor do elemento atual(índice) deve ser atribuído a variável <i>let movie</i>. Também está sendo dito que a tag li deve ser replicada a cada interação. Além disso, há uma interpolação do valor atribuído a let movie, ou seja, para cada interação haverá um li com o valor encontrado no índice. Resultado:
+
+    *Good Fellas
+    *The Irishman
+    *Taxi Driver
+
+<h3>*ngIf</h3>
+
+A diretiva \*ngIf possui o mesmo comportamento de uma estrutura if-else, onde é possível declarar um ou mais parâmetros condicionais, os quais definem o retorno da informação que atender a condição imposta, ou o oposto. Para entendê-lo melhor, imagine o seguinte cenário:
+
+    import { Component } from '@angular/core';
+
+
+    @Component({
+      selector: 'app-root',
+      templateUrl: './app.component.html',
+    })
+
+    export class AppComponent {
+
+      songs: string[] = [];
+
+      constructor() {}
+
+    }
+
+Um array to tipo string é declarado como vazio na classe AppComponent. Essa unidade de armazenamento será o elemento base da estrutura condicional que iremos criar com o \*ngIf. Em seguida temos:
+
+    <div *ngIf="songs.length > 0">
+     Lista de músicas
+    </div>
+
+    <div *ngIf="songs.length == 0">
+     A lista de músicas está vazia
+    </div>
+
+
+    //browser:
+
+     A lista de músicas está vazia
+
+Ao lançar a aplicação, temos resultado o definido na condição atendida, esta sendo o length do array songs == 0. Para um resultado diferente modifique o atributo songs incluindo alguns nomes de músicas, com por exemplo:
+
+    songs: string[] = ['Children of the Grave', 'Panaroid', 'Immigrant Song'];
+
+Para melhorar um pouco o resultado, modifique o arquivo app.component.html incluíndo a diretiva \*ngFor da seguinte forma:
+
+    <div *ngIf="songs.length > 0">
+    Lista de músicas
+     <ul>
+       <li *ngFor="let song of songs">
+         {{ song }}
+       </li>
+     </ul>
+    </div>
+
+    <div *ngIf="songs.length == 0">
+     A lista de músicas está vazia
+    </div>
+
+A condição atendida foi a que definia um length maior que zero para o array songs, resultado em uma alteração do template.
+
+    //browser:
+
+    Lista de músicas
+    Children of the Grave
+    Panaroid
+    Immigrant Song
+
+...
+
+<h2>@Injectable</h2>
+
+O conceito de injeção de dependências é bastante conhecido dos que possuem certa experiência com desenvolvimento, e é bastente comum nos frameworks mais modernos. Não sendo uma exceção no Angular, que possui o decorator <i>@Injectable</i> para tal funcionalidade. O exemplo a seguir mostra a estrutura base de uma classe Injectable:
+
+    import { Injectable } from '@angular/core';
+
+
+    @Injectable({
+      ...
+    })
+    export class InjectableClass {
+
+    }
+
+Uma classe declarada como @Injectable é definida como uma classe injetável, ou seja, a partir do momento em que sofre instanciação, seja dentro de um component ou de outra classe injectable, os metadados necessários para criar as dependências da mesma serão gerados. Tais dependências podem ser serviços externos, como a chamada de requisições em uma Api, por exemplo.
+
+O Angular define a injeção de dependências exclusivamente via constructor, ou seja, para que um component possa fazer uso de uma classe Injectable, uma instância dessa classe precisa ser declarada no contructor do component. Observe o exemplo:
+
+    import { Component } from '@angular/core';
+    import { InjectableClass } from '...';
+
+    @Component({
+      selector: 'app-root',
+      templateUrl: './app.component.html',
+    })
+    export class AppComponent {
+
+      constructor(private injectableClass: InjectableClass) {
+
+      }
+    }
+
+O Typescript ainda disponibiliza os modificadores de acesso <i>private</i> e o <i>public</i>. Uma Injectable Class declarada como private define que a propriedade a qual ela foi atribuída faz parte da classe ou do component em que ela é declarada, podendo ser chamada através do identificador <i>this.</i>.
+
+<h2>@Pipe</h2>
+
+Pipes são recursos bastante úteis para o Angular. Eles são basicamente macanismos simples que transformam e retornam valores de acordo com os parâmetros declarados. A seguir temos um exemplo de declaração de um Pipe:
+
+    import { Pipe } from ‘@angular/core’;
+
+    @Pipe({
+
+    name: string
+
+    pure?: boolean
+
+    })
+
+<h2>@Input & @Output</h2>
+
+Tanto o @Input quanto o @Output definem mecanismos de comunicação entre components chamados parents e um ou mais child component. Sendo o @Input() responsável por permitir que um parent component faça updates em um child component, já o @Output() permite que child components enviem dados para seus parents.
+
+    import { Input, Output } from ‘@angular/core’;
+
+    @Input({
+
+    bindingPropertyName?: string
+
+    })
+
+    @Output({
+
+    bindingPropertyName?: string
+
+    })
 
 <h2>Dependency Injection</h2>
 
